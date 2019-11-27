@@ -19,7 +19,7 @@ type redirectService struct {
 // Instantiates a new redirect service
 func NewRedirectService(repo RedirectRepository) RedirectService {
 	return &redirectService{
-		repository,
+		repository: repo,
 	}
 }
 

@@ -2,16 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	h "shortr/api"
 	mr "shortr/repository/mongo"
 	rr "shortr/repository/redis"
 	"shortr/shortener"
 	"strconv"
+	"syscall"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
@@ -34,7 +37,13 @@ func main() {
 		errs <- http.ListenAndServe(httpPort(), r)
 	}()
 
-	fmt.Println("Terminated service %s", <-errs)
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGINT)
+		errs <- fmt.Errorf("%s", <-c)
+	}()
+
+	fmt.Printf("\nTerminated: %s", <-errs)
 }
 
 func httpPort() string {

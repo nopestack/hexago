@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"go.mongodb.com/mongo-driver/bson"
-	"go.mongodb.com/mongo-driver/mongo"
-	"go.mongodb.com/mongo-driver/mongo/options"
-	"go.mongodb.com/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"shortr/shortener"
 )
 
@@ -58,7 +58,7 @@ func (r *mongoRepository) Find(code string) (*shortener.Redirect, error) {
 	collection := r.client.Database(r.database).Collection("redirects")
 
 	filter := bson.M{"code": code}
-	err := collection.FindOne(ctx, filter).Done(&redirect)
+	err := collection.FindOne(ctx, filter).Decode(&redirect)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Wrap(shortener.ErrRedirectNotFound, "repository.Redirect.Find")

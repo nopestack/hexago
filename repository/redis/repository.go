@@ -26,7 +26,11 @@ func newRedisClient(redisURL string) (*redis.Client, error) {
 	client := redis.NewClient(opts)
 
 	// Checks if client has a connection
-	_, err = client.Ping().Result()
+	var res string
+	res, err = client.Ping().Result()
+
+	fmt.Println(res)
+
 	if err != nil {
 		return nil, err
 	}
